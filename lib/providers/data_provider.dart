@@ -1,71 +1,71 @@
 import 'dart:async';
 
-import 'package:qi_keto/db/local.dart';
-import 'package:qi_keto/models/alarmdataModel.dart';
+import 'package:random/db/local.dart';
+import 'package:random/models/dataModel.dart';
 import 'package:flutter/material.dart';
 
 
 
-class AlarmProvider extends ChangeNotifier {
-  final _alarmController = StreamController<List<AlarmDataModel>>.broadcast();
+class DataProvider extends ChangeNotifier {
+  final _dataController = StreamController<List<DataModel>>.broadcast();
 
-  Stream<List<AlarmDataModel>> get getAlarmStream => _alarmController.stream;
+  Stream<List<DataModel>> get getDataStream => _dataController.stream;
 
   /// 新增的 controller
-  final _insertController = StreamController<AlarmDataModel>.broadcast();
+  final _insertController = StreamController<DataModel>.broadcast();
 
   /// 更新的 controller
-  final _updateController = StreamController<AlarmDataModel>.broadcast();
+  final _updateController = StreamController<DataModel>.broadcast();
 
   /// 刪除的 controller
   final _deleteController = StreamController<int>.broadcast();
 
 
   /// Sink
-  StreamSink<AlarmDataModel> get insert => _insertController.sink;
+  StreamSink<DataModel> get insert => _insertController.sink;
 
-  StreamSink<AlarmDataModel> get update => _updateController.sink;
+  StreamSink<DataModel> get update => _updateController.sink;
 
   StreamSink<int> get delete => _deleteController.sink;
 
   /// 初始化
-  AlarmProvider() {
+  DataProvider() {
     updateScreenData();
     _updateController.stream
-        .listen((alarmModel) => _handleUpdateAlarm(alarmModel));
-    _insertController.stream.listen((alarmModel) => _handleAddAlarm(alarmModel));
+        .listen((dataModel) => _handleUpdateData(dataModel));
+    _insertController.stream.listen((dataModel) => _handleAddData(dataModel));
     _deleteController.stream
-        .listen((alarmModel) => _handleDeleteAlarm(alarmModel));
+        .listen((dataModel) => _handleDeleteData(dataModel));
 
   }
   /// 新增
-  void _handleAddAlarm(AlarmDataModel alarmModel) async {
-    print("新增鬧鐘的provider");
-    print(await AppDB.db.insertAlarm(alarmModel));
+  void _handleAddData(DataModel dataModel) async {
+
+    print(await AppDB.db.insertData(dataModel));
     updateScreenData();
   }
 
   /// 更新
-  void _handleUpdateAlarm(AlarmDataModel alarmModel) async {
-    await AppDB.db.updateAlarm(alarmModel);
+  void _handleUpdateData(DataModel dataModel) async {
+    await AppDB.db.updateData(dataModel);
     updateScreenData();
   }
 
   /// 刪除
-  void _handleDeleteAlarm(int alarmid) async {
-    await AppDB.db.deleteAlarm(alarmid);
+  void _handleDeleteData(int dataId) async {
+    await AppDB.db.deleteData(dataId);
     updateScreenData();
   }
 
   /// 取得資料
   void updateScreenData() async {
-    List<AlarmDataModel> alarm = await AppDB.db.getAlarm();
-    _alarmController.sink.add(alarm);
+    List<DataModel> data = await AppDB.db.getData();
+    _dataController.sink.add(data);
   }
 
   @override
   void dispose() {
-    _alarmController.close();
+    _dataController.close();
     _insertController.close();
     _deleteController.close();
     _updateController.close();

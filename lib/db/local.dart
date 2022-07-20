@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:path/path.dart';
+import 'package:random/models/dataModel.dart';
 import 'package:sqflite/sqflite.dart';
 
 
@@ -24,16 +25,8 @@ class AppDB {
       onOpen: (db) async {}, onCreate: (Database db, int version) async {
 
         await db.execute(
-            "CREATE TABLE sportRecord(sport_record_sn Text, created_at TEXT,  heartbeat TEXT, vo2max TEXT)");
-        await db.execute(
-            "CREATE TABLE IF NOT EXISTS user(result INTEGER,errorMassage TEXT,username TEXT,key TEXT)");
-        await db.execute(
-            "CREATE TABLE IF NOT EXISTS meal(id INTEGER PRIMARY KEY,date NUMERIC,time NUMERIC,meal TEXT,cal REAL , amount REAL , food  TEXT , water REAL ,cafe REAL,alcohol REAL,  supply TEXT ,note)");
-        await db.execute(
-            "CREATE TABLE IF NOT EXISTS power(powerID INTEGER PRIMARY KEY AUTOINCREMENT,recordDate Text,recordTime TEXT,powerNumber INTEGER)");
-        await db.execute(
-            "CREATE TABLE IF NOT EXISTS alarm(alarmid INTEGER PRIMARY KEY AUTOINCREMENT,hour INTEGER,minute INTEGER,mon INTEGER,tues INTEGER,wed INTEGER,thur INTEGER,fri INTEGER,sat INTEGER,sun INTEGER,ringtone TEXT,repeat INTEGER)");
-        await db.execute(
+            "CREATE TABLE record(dataId Text, day INTEGER,  year INTEGER, month INTEGER,content TEXT ,answer TEXT)");
+         await db.execute(
             "CREATE TABLE IF NOT EXISTS setting(id INTEGER PRIMARY KEY AUTOINCREMENT,key TEXT,value TEXT)");
 
       },
@@ -72,224 +65,43 @@ class AppDB {
   
 
 
-  Future insertHeartbeatData(HeartbeatModel model) async {
+  Future insertData(model) async {
     final db = await database;
-    return db.insert('sportRecord', model.toMap());
+    return db.insert('record', model);
   }
 
-  Future updateHeartbeat(HeartbeatModel model) async {
-    final db = await database;
-    return db
-        .update('sportRecord', model.toMap(), where: "sport_record_sn = ?", whereArgs: [model.sport_record_sn]);
-  }
-
-  Future<int> deleteHeartbeat(String sport_record_sn) async {
-    final db = await database;
-    return db.delete('sportRecord', where: "sport_record_sn = ?", whereArgs: [sport_record_sn]);
-  }
-
-  Future<List<HeartbeatModel>> getHeartbeat() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('sportRecord');
-    List<HeartbeatModel> list = maps.isNotEmpty
-        ? maps.map((note) => HeartbeatModel.fromMap(note)).toList()
-        : [];
-
-    return list;
-  }
-
-    Future<List<HeartbeatModel>> searchdata(String sport_record_sn) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('sportRecord',  where: "sport_record_sn = ?", whereArgs: [sport_record_sn]);
-    List<HeartbeatModel> list = maps.isNotEmpty
-        ? maps.map((note) => HeartbeatModel.fromMap(note)).toList()
-        : [];
-
-    return list;
-  }
-
-
-
-  Future<HeartbeatModel> getHeartbeatNew() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('sportRecord');
-    List<HeartbeatModel> list = maps.isNotEmpty
-        ? maps.map((note) => HeartbeatModel.fromMap(note)).toList()
-        : [];
-
-    return list.last;
-  }
-
-
-/////////////////////////
-//
-//   Future insertmealData(MealModel model) async {
-//     final db = await database;
-//     return db.insert('meal', model.toMap());
-//   }
-//
-//   Future updatemeal(MealModel model) async {
-//     final db = await database;
-//     return db
-//         .update('meal', model.toMap(), where: "id = ?", whereArgs: [model.id]);
-//   }
-//
-//
-//
-//   Future<int> deletemeal(int id) async {
-//     final db = await database;
-//     return db.delete('meal', where: "id = ?", whereArgs: [id]);
-//   }
-//
-//   Future<List<MealModel>> getmeal() async {
-//     final db = await database;
-//     final List<Map<String, dynamic>> maps = await db.query('meal');
-//     List<MealModel> list = maps.isNotEmpty
-//         ? maps.map((note) => MealModel.fromMap(note)).toList()
-//         : [];
-//
-//     return list;
-//   }
-//
-//   Future<List<MealModel>> getMealADay(MealModel model) async {
-//     final db = await database;
-//     final List<Map<String, dynamic>> maps = await db.query('meal',  where: "date = ?", whereArgs: [model.date]);
-//     List<MealModel> list = maps.isNotEmpty
-//         ? maps.map((note) => MealModel.fromMap(note)).toList()
-//         : [];
-//
-//     return list;
-//   }
-
-
-///////////////////
-
-
-
-
-
-  Future insertPowerData(PowerModel model) async {
-    final db = await database;
-    return db.insert('power', model.toMap());
-  }
-
-  Future updatePowerNumber(PowerModel model) async {
+  Future updateData(DataModel model) async {
     final db = await database;
     return db
-        .update('power', model.toMap(), where: "powerID = ?", whereArgs: [model.powerID]);
+        .update('record', model.toMap(), where: "dataId = ?", whereArgs: [model.dataId]);
   }
 
-  Future<int> deletePowerData(String powerID) async {
+  Future<int> deleteData(int dataId) async {
     final db = await database;
-    return db.delete('power', where: "powerID = ?", whereArgs: [powerID]);
+    return db.delete('record', where: "dataId = ?", whereArgs: [dataId]);
   }
 
-  Future<List<PowerModel>> getPowerData() async {
+  Future<List<DataModel>> getData() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('power');
-    List<PowerModel> list = maps.isNotEmpty
-        ? maps.map((note) => PowerModel.fromMap(note)).toList()
+
+    final List<Map<String, dynamic>> maps = await db.query('record', where: "day=? and month=?", whereArgs: [DateTime.now().day,DateTime.now().month]);
+    List<DataModel> list = maps.isNotEmpty
+        ? maps.map((note) => DataModel.fromMap(note)).toList()
         : [];
 
     return list;
   }
 
-  Future<List<PowerModel>> searchPowerData(String powerID) async {
+    Future<List<DataModel>> searchData(int dataId) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('power',  where: "powerID = ?", whereArgs: [powerID]);
-    List<PowerModel> list = maps.isNotEmpty
-        ? maps.map((note) => PowerModel.fromMap(note)).toList()
+    final List<Map<String, dynamic>> maps = await db.query('sportRecord',  where: "sport_record_sn = ?", whereArgs: [dataId]);
+    List<DataModel> list = maps.isNotEmpty
+        ? maps.map((note) => DataModel.fromMap(note)).toList()
         : [];
 
     return list;
   }
 
-
-//////////////////////////////////////////////////////////////////
-//鬧鐘CRUD
-//
-//
-//////////////////////////////////////////////////////////////////
-
-
-  Future insertAlarm(AlarmDataModel model) async {
-    print("alarm insert");
-    final db = await database;
-    return db.insert('alarm', model.toMap());
-  }
-
-  Future updateAlarm(AlarmDataModel model) async {
-    final db = await database;
-    return db
-        .update('alarm', model.toMap(), where: "alarmid = ?", whereArgs: [model.alarmid]);
-  }
-
-  Future<int> deleteAlarm(int  alarmid) async {
-    final db = await database;
-    return db.delete('alarm', where: "alarmid = ?", whereArgs: [alarmid]);
-  }
-
-  Future<List<AlarmDataModel>> getAlarm() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('alarm');
-    List<AlarmDataModel> list = maps.isNotEmpty
-        ? maps.map((note) => AlarmDataModel.fromMap(note)).toList()
-        : [];
-
-    return list;
-  }
-
-
-
-
-
-
-
-
-
-  ///////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-  Future insertuserData(User model) async {
-    await deleteuser();
-    final db = await database;
-    return db.insert('user', model.toMap());
-  }
-  Future updateuser(User model) async {
-
-
-
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('user');
-    if(maps.length > 0)
-      return db
-          .update('user', model.toMap(), where: "result = ?", whereArgs: [200]);
-    else insertuserData(model);
-
-
-
-    return db
-        .update('user', model.toMap(), where: "id = ?", whereArgs: [1]);
-  }
-
-
-  Future<void> deleteuser() async {
-    final db = await database;
-     db.delete('user');
-  }
-
-  Future<User> getuser() async {
-
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('user');
-
-
-    User user = maps.first as User;
-    return user;
-  }
 
 
 ///////////

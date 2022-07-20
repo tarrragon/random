@@ -1,111 +1,81 @@
 import 'dart:convert';
 
-class AlarmDataModel{
-  int? alarmid;
-  int hour;
-  int minute;
-  int mon;
-  int tues;
-  int wed;
-  int thur;
-  int fri;
-  int sat;
-  int sun;
-  String ringtone;
-  int repeat;
+class DataModel{
+  int? dataId;
+  int month;
+  int day;
+  int year;
+  int answer;
+  String content;
 
 
-  AlarmDataModel({
-    this.alarmid,
-    required this.hour,
-    required this.minute,
-    required this.mon,
-    required this.tues,
-    required this.wed,
-    required this.thur,
-    required this.fri,
-    required this.sat,
-    required this.sun,
-    required this.ringtone,
-    required this.repeat,
+
+  DataModel({
+    this.dataId,
+    required this.month,
+    required this.year,
+    required this.day,
+    required this.content,
+    required this.answer,
+
   });
 
 
-  factory AlarmDataModel.fromJson(Map<String,dynamic> parsedJson){
-    return AlarmDataModel(
-      alarmid : parsedJson['id'],
-      hour : parsedJson['hour'],
-      minute : parsedJson['minute'],
-      mon : parsedJson['mon'],
-      tues : parsedJson['tues'],
-      wed : parsedJson['wed'],
-      thur : parsedJson['thur'],
-      fri : parsedJson['fri'],
-      sat : parsedJson['sat'],
-      sun : parsedJson['sun'],
-      ringtone : parsedJson['ringtone'],
-      repeat : parsedJson['repeat'],
+  factory DataModel.fromJson(Map<String,dynamic> parsedJson){
+    return DataModel(
+      dataId : parsedJson['dataId'],
+      month : parsedJson['month'],
+      year : parsedJson['year'],
+      day : parsedJson['day'],
+      answer : parsedJson['answer'],
+      content : parsedJson['content'],
+
     );
   }
 
-  static List<AlarmDataModel> listFromJson(List<dynamic> list) {
-    List<AlarmDataModel> rows = list.map((i) => AlarmDataModel.fromJson(i)).toList();
+  static List<DataModel> listFromJson(List<dynamic> list) {
+    List<DataModel> rows = list.map((i) => DataModel.fromJson(i)).toList();
     return rows;
   }
 
-  static List<AlarmDataModel> listFromString(String responseBody) {
+  static List<DataModel> listFromString(String responseBody) {
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-    return parsed.map<AlarmDataModel>((json) => AlarmDataModel.fromJson(json)).toList();
+    return parsed.map<DataModel>((json) => DataModel.fromJson(json)).toList();
   }
 
   Map<String,dynamic> toJson()=>{
-    'alarmid' : alarmid,
-    'hour':hour,
-    'minute':minute,
-    'mon' : mon,
-    'tues' : tues,
-    'wed' : wed,
-    'thur' : thur,
-    'fri' : fri,
-    'sat' : sat,
-    'sun' : sun,
-    'ringtone' : ringtone,
-    'repeat' : repeat,
+    'dataId' : dataId,
+    'month':month,
+    'year':year,
+    'day' : day,
+    'content' : content,
+    'answer' : answer,
+
   };
 
 
   Map<String, dynamic> toMap() {
     return {
-      'alarmid' : alarmid,
-      'hour' : hour,
-      'minute':minute,
-      'mon' : mon,
-      'tues' : tues,
-      'wed' : wed,
-      'thur' : thur,
-      'fri' : fri,
-      'sat' : sat,
-      'sun' : sun,
-      'ringtone' : ringtone,
-      'repeat' : repeat,
+      'dataId' : dataId,
+      'month' : month,
+      'year':year,
+      'day' : day,
+      'content' : content,
+      'answer' : answer,
+
     };
   }
 
-  factory AlarmDataModel.fromMap(Map<String, dynamic> map) {
-    return AlarmDataModel(
+  factory DataModel.fromMap(Map<String, dynamic> map) {
+    return DataModel(
 
-      alarmid : map['alarmid'],
-      hour : map['hour'],
-      minute : map['minute'],
-      mon : map['mon'],
-      tues : map['tues'],
-      wed : map['wed'],
-      thur : map['thur'],
-      fri : map['fri'],
-      sat : map['sat'],
-      sun : map['sun'],
-      ringtone : map['ringtone'],
-      repeat : map['repeat'],
+      dataId : map['dataId'],
+      month : map['month'],
+      year : map['year'],
+      day : map['day'],
+      content : map['content'],
+      answer : map['answer'],
+
     );
   }
 

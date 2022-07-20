@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:random/models/dataModel.dart';
+import 'package:random/providers/data_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,8 +18,8 @@ class MyApp extends StatelessWidget {
 
       providers: [
 
-        ChangeNotifierProvider<AlarmProvider>(
-          create: (context) => new AlarmProvider(),
+        ChangeNotifierProvider<DataProvider>(
+          create: (context) => DataProvider(),
 
         ),
 
@@ -62,17 +65,58 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+
+  addDialog() {
+    TextEditingController _new = TextEditingController();
+
+    var dialog = CupertinoAlertDialog(
+      content: TextField(
+        controller: _new,
+
+        style: const TextStyle(fontSize: 20),
+      ),
+      actions: <Widget>[
+
+        CupertinoButton(
+          child: const Text("確認"),
+          onPressed: () {
+            DataModel model = DataModel(
+              day : DateTime.now().day,
+              month : DateTime.now().month,
+              year:DateTime.now().year,
+              content:_new.text,
+              answer: 1,
+
+              );
+            context
+                .read<DataProvider>()
+                .insert.add(model);
+
+            Navigator.pop(context);
+
+
+          },
+
+        ),
+        CupertinoButton(
+          child: const Text("返回"),
+          onPressed: () {
+
+            Navigator.pop(context);
+
+
+          },
+
+        ),
+
+
+
+
+      ],
+    );
+
+
   }
 
   @override
@@ -109,19 +153,17 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+
             Text(
-              '$_counter',
+              'Good Day',
               style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: addDialog,
+
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
