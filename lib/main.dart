@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:random/conponent/datalist.dart';
 import 'package:random/models/dataModel.dart';
 import 'package:random/providers/data_provider.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -65,104 +70,105 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool list = false;
+  String str ="";
+  Future<void> _loadAnswer() async {
+    String jsonString = await rootBundle.loadString('assets/answer.json');
+    Map<String,dynamic> mod =  json.decode(jsonString);
 
-
+    String ans = mod['answer'][DateTime.now().second%10];
+    str=  ans;
+  }
   addDialog() {
     TextEditingController _new = TextEditingController();
-
+    // TextField(
+    //   controller: _new,
+    //
+    //   style: const TextStyle(fontSize: 20),
+    // ),
     var dialog = CupertinoAlertDialog(
-      content: TextField(
-        controller: _new,
-
-        style: const TextStyle(fontSize: 20),
+      title: const Text("說出你的願望吧"),
+      content:  Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CupertinoTextField(
+            controller:_new
+        ),
       ),
       actions: <Widget>[
 
         CupertinoButton(
           child: const Text("確認"),
           onPressed: () {
+
+
+
             DataModel model = DataModel(
               day : DateTime.now().day,
               month : DateTime.now().month,
               year:DateTime.now().year,
               content:_new.text,
-              answer: 1,
+              answer: str,
 
               );
             context
                 .read<DataProvider>()
                 .insert.add(model);
-
             Navigator.pop(context);
+            setState(() {
 
-
+            });
           },
 
         ),
         CupertinoButton(
           child: const Text("返回"),
           onPressed: () {
-
             Navigator.pop(context);
-
 
           },
 
         ),
 
-
-
-
       ],
     );
-
+    showDialog(context: context, builder: (_) => dialog);
 
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+
+        title: const Text("籤詩來源自宋尚緯的噗文"),
+        leading: IconButton(icon: const Icon(Icons.swap_horiz_sharp),onPressed: (){
+          list = !list;setState(() {
+
+          });
+        },),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
 
-            Text(
-              'Good Day',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            key: UniqueKey(),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              list? DataList():
+              str != ""?
+              Text(str):
+              Text(
+                'Good Day',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: addDialog,
+        onPressed: (){addDialog();_loadAnswer(); },
 
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

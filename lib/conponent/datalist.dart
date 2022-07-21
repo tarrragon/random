@@ -16,12 +16,13 @@ class DataList extends StatefulWidget {
 class _DataListState extends State<DataList> {
   @override
   Widget build(BuildContext context) {
+
     return
           Expanded(
           child: StreamBuilder<List<DataModel>>(
 
           stream: context.watch<DataProvider>().getDataStream,
-      builder: (BuildContext context, AsyncSnapshot<List<DataModel>> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<List<DataModel>> snapshot) {
 
           if (snapshot.hasData ||snapshot.hasError ||snapshot.data == null) {
             if (snapshot.data == null|| snapshot.hasError) {
@@ -32,14 +33,20 @@ class _DataListState extends State<DataList> {
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 margin: const EdgeInsets.all(25),
-                child: TextButton(
-                  child:  Text(
-                    snapshot.data![index].content,
-                    style: const TextStyle(fontSize: 20.0),
-                  ),
-                  onPressed: () {
-                    editDialog(snapshot.data![index]);
-                  },
+                child: Column(
+                  children: [
+                    Text(snapshot.data![index].year.toString()),
+                    Text( snapshot.data![index].answer,),
+                    TextButton(
+                      child:  Text(
+                        snapshot.data![index].content,
+                        style: const TextStyle(fontSize: 20.0),
+                      ),
+                      onPressed: () {
+                        editDialog(snapshot.data![index]);
+                      },
+                    ),
+                  ],
                 ),
               );
 
@@ -56,11 +63,12 @@ class _DataListState extends State<DataList> {
     TextEditingController _edit = TextEditingController();
     _edit.text = data.content;
     var dialog = CupertinoAlertDialog(
-      content: TextField(
-        controller: _edit,
-
-        style: const TextStyle(fontSize: 20),
-      ),
+      content:  Padding(
+        padding: const EdgeInsets.all(8.0),
+            child: CupertinoTextField(
+                controller:_edit
+        ),
+    ),
       actions: <Widget>[
 
         CupertinoButton(
@@ -101,6 +109,7 @@ class _DataListState extends State<DataList> {
 
       ],
     );
+    showDialog(context: context, builder: (_) => dialog);
 
 
   }

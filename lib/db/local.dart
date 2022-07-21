@@ -65,9 +65,10 @@ class AppDB {
   
 
 
-  Future insertData(model) async {
+  Future insertData(DataModel model) async {
     final db = await database;
-    return db.insert('record', model);
+
+    return db.insert('record', model.toMap());
   }
 
   Future updateData(DataModel model) async {

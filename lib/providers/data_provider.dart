@@ -33,15 +33,15 @@ class DataProvider extends ChangeNotifier {
     updateScreenData();
     _updateController.stream
         .listen((dataModel) => _handleUpdateData(dataModel));
-    _insertController.stream.listen((dataModel) => _handleAddData(dataModel));
+    _insertController.stream.listen(( model) => _handleAddData( model));
     _deleteController.stream
         .listen((dataModel) => _handleDeleteData(dataModel));
 
   }
   /// 新增
-  void _handleAddData(DataModel dataModel) async {
+  void _handleAddData( DataModel model) async {
 
-    print(await AppDB.db.insertData(dataModel));
+    await AppDB.db.insertData(model);
     updateScreenData();
   }
 

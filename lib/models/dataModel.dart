@@ -5,7 +5,7 @@ class DataModel{
   int month;
   int day;
   int year;
-  int answer;
+  String answer;
   String content;
 
 
