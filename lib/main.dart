@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:random/component/datalist.dart';
-import 'package:random/models/dataModel.dart';
+import 'package:random/models/data_model.dart';
 import 'package:random/providers/data_provider.dart';
 
 void main() {
@@ -139,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ? Text(str)
                       : Text(
                           'Good Day',
-                          style: Theme.of(context).textTheme.headline4,
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
             ],
           ),
