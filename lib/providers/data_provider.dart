@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:random/db/local.dart';
-import 'package:random/models/dataModel.dart';
+import 'package:random/models/data_model.dart';
 import 'package:flutter/material.dart';
-
-
 
 class DataProvider extends ChangeNotifier {
   final _dataController = StreamController<List<DataModel>>.broadcast();
@@ -20,7 +18,6 @@ class DataProvider extends ChangeNotifier {
   /// 刪除的 controller
   final _deleteController = StreamController<int>.broadcast();
 
-
   /// Sink
   StreamSink<DataModel> get insert => _insertController.sink;
 
@@ -33,14 +30,13 @@ class DataProvider extends ChangeNotifier {
     updateScreenData();
     _updateController.stream
         .listen((dataModel) => _handleUpdateData(dataModel));
-    _insertController.stream.listen(( model) => _handleAddData( model));
+    _insertController.stream.listen((model) => _handleAddData(model));
     _deleteController.stream
         .listen((dataModel) => _handleDeleteData(dataModel));
-
   }
-  /// 新增
-  void _handleAddData( DataModel model) async {
 
+  /// 新增
+  void _handleAddData(DataModel model) async {
     await AppDB.db.insertData(model);
     updateScreenData();
   }
@@ -73,6 +69,4 @@ class DataProvider extends ChangeNotifier {
     AppDB.db.close();
     super.dispose();
   }
-
-
 }

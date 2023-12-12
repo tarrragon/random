@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:path/path.dart';
-import 'package:random/models/dataModel.dart';
+import 'package:random/models/data_model.dart';
 import 'package:sqflite/sqflite.dart';
-
-
 
 class AppDB {
   static final AppDB db = AppDB();
@@ -20,50 +18,37 @@ class AppDB {
   Future openDb() async {
     // 獲取我們的應用程序目錄的位置。這是我們應用程序文件的存儲位置，並且僅存儲我們的應用程序文件。
     // 當應用被刪除時，此目錄中的文件也會被刪除。
-    return await openDatabase(join(await getDatabasesPath(), 'qi.db'),
+    return await openDatabase(
+      join(await getDatabasesPath(), 'qi.db'),
       version: 1,
-      onOpen: (db) async {}, onCreate: (Database db, int version) async {
-
+      onOpen: (db) async {},
+      onCreate: (Database db, int version) async {
         await db.execute(
             "CREATE TABLE record(dataId Text, day INTEGER,  year INTEGER, month INTEGER,content TEXT ,answer TEXT)");
-         await db.execute(
+        await db.execute(
             "CREATE TABLE IF NOT EXISTS setting(id INTEGER PRIMARY KEY AUTOINCREMENT,key TEXT,value TEXT)");
-
       },
-
     );
   }
-  Future insertSetting(key,value) async {
-    final db = await database;
-    Map<String, dynamic> row = {
-      "key" : key,
-      "value"  : value
-    };
 
+  Future insertSetting(key, value) async {
+    final db = await database;
+    Map<String, dynamic> row = {"key": key, "value": value};
 
     return db.insert('setting', row);
   }
 
-  Future updateSetting(key,value) async {
+  Future updateSetting(key, value) async {
     final db = await database;
-    Map<String, dynamic> row = {
-      "key" : key,
-      "value"  : value
-    };
-    return db
-        .update('setting', row, where: "key = ?", whereArgs: [key]);
+    Map<String, dynamic> row = {"key": key, "value": value};
+    return db.update('setting', row, where: "key = ?", whereArgs: [key]);
   }
 
   Future<List<Map<String, dynamic>>> getSetting(key) async {
     final db = await database;
     // return db.query('setting' );
-    return db.rawQuery('SELECT value FROM setting WHERE  key = ?',  [key]);
-
+    return db.rawQuery('SELECT value FROM setting WHERE  key = ?', [key]);
   }
-  
-  
-  
-
 
   Future insertData(DataModel model) async {
     final db = await database;
@@ -73,8 +58,8 @@ class AppDB {
 
   Future updateData(DataModel model) async {
     final db = await database;
-    return db
-        .update('record', model.toMap(), where: "dataId = ?", whereArgs: [model.dataId]);
+    return db.update('record', model.toMap(),
+        where: "dataId = ?", whereArgs: [model.dataId]);
   }
 
   Future<int> deleteData(int dataId) async {
@@ -85,7 +70,9 @@ class AppDB {
   Future<List<DataModel>> getData() async {
     final db = await database;
 
-    final List<Map<String, dynamic>> maps = await db.query('record', where: "day=? and month=?", whereArgs: [DateTime.now().day,DateTime.now().month]);
+    final List<Map<String, dynamic>> maps = await db.query('record',
+        where: "day=? and month=?",
+        whereArgs: [DateTime.now().day, DateTime.now().month]);
     List<DataModel> list = maps.isNotEmpty
         ? maps.map((note) => DataModel.fromMap(note)).toList()
         : [];
@@ -93,24 +80,20 @@ class AppDB {
     return list;
   }
 
-    Future<List<DataModel>> searchData(int dataId) async {
+  Future<List<DataModel>> searchData(int dataId) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('sportRecord',  where: "sport_record_sn = ?", whereArgs: [dataId]);
+    final List<Map<String, dynamic>> maps = await db.query('sportRecord',
+        where: "sport_record_sn = ?", whereArgs: [dataId]);
     List<DataModel> list = maps.isNotEmpty
         ? maps.map((note) => DataModel.fromMap(note)).toList()
         : [];
 
     return list;
   }
-
-
 
 ///////////
 
   Future close() async => db.close();
-
-
-
 }
 
 /////////////////////crud範本//////////////////
