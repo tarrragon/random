@@ -4,10 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:random/conponent/datalist.dart';
+import 'package:random/component/datalist.dart';
 import 'package:random/models/dataModel.dart';
 import 'package:random/providers/data_provider.dart';
-
 
 void main() {
   runApp(const MyApp());
@@ -20,16 +19,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-
       providers: [
-
         ChangeNotifierProvider<DataProvider>(
           create: (context) => DataProvider(),
-
         ),
-
-
-
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -71,14 +64,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool list = false;
-  String str ="";
+  String str = "";
   Future<void> _loadAnswer() async {
     String jsonString = await rootBundle.loadString('assets/answer.json');
-    Map<String,dynamic> mod =  json.decode(jsonString);
+    Map<String, dynamic> mod = json.decode(jsonString);
 
-    String ans = mod['answer'][DateTime.now().second%10];
-    str=  ans;
+    String ans = mod['answer'][DateTime.now().second % 10];
+    str = ans;
   }
+
   addDialog() {
     TextEditingController _new = TextEditingController();
     // TextField(
@@ -88,88 +82,74 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
     var dialog = CupertinoAlertDialog(
       title: const Text("說出你的願望吧"),
-      content:  Padding(
+      content: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: CupertinoTextField(
-            controller:_new
-        ),
+        child: CupertinoTextField(controller: _new),
       ),
       actions: <Widget>[
-
         CupertinoButton(
           child: const Text("確認"),
           onPressed: () {
-
-
-
             DataModel model = DataModel(
-              day : DateTime.now().day,
-              month : DateTime.now().month,
-              year:DateTime.now().year,
-              content:_new.text,
+              day: DateTime.now().day,
+              month: DateTime.now().month,
+              year: DateTime.now().year,
+              content: _new.text,
               answer: str,
-
-              );
-            context
-                .read<DataProvider>()
-                .insert.add(model);
+            );
+            context.read<DataProvider>().insert.add(model);
             Navigator.pop(context);
-            setState(() {
-
-            });
+            setState(() {});
           },
-
         ),
         CupertinoButton(
           child: const Text("返回"),
           onPressed: () {
             Navigator.pop(context);
-
           },
-
         ),
-
       ],
     );
     showDialog(context: context, builder: (_) => dialog);
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-
         title: const Text("籤詩來源自宋尚緯的噗文"),
-        leading: IconButton(icon: const Icon(Icons.swap_horiz_sharp),onPressed: (){
-          list = !list;setState(() {
-
-          });
-        },),
+        leading: IconButton(
+          icon: const Icon(Icons.swap_horiz_sharp),
+          onPressed: () {
+            list = !list;
+            setState(() {});
+          },
+        ),
       ),
       body: Center(
-
         child: Padding(
           padding: const EdgeInsets.all(25.0),
           child: Column(
             key: UniqueKey(),
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              list? DataList():
-              str != ""?
-              Text(str):
-              Text(
-                'Good Day',
-                style: Theme.of(context).textTheme.headline4,
-              ),
+              list
+                  ? const DataList()
+                  : str != ""
+                      ? Text(str)
+                      : Text(
+                          'Good Day',
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){addDialog();_loadAnswer(); },
-
+        onPressed: () {
+          addDialog();
+          _loadAnswer();
+        },
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
